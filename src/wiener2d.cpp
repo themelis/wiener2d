@@ -8,7 +8,6 @@
 #include <algorithm>
 
 #include "fitsio.h"
-// #include "wiener_filtering.h"
 
 using namespace std;
 
@@ -343,6 +342,7 @@ int main(int argc, char** argv)
 		rimg[i] = {ps2d[i], .0};
 	fftshift(rimg, shimg, npix);
 
+	// pushback data to vectors
 	std::vector<double> Sn;
 	std::vector<double> Px;
 	std::vector<std::complex<double>> shear_res;
@@ -362,21 +362,13 @@ int main(int argc, char** argv)
 	cout << "Running wiener filtering" << endl;
 	imgw = wiener_core(shear_res, Px, Sn, Niter, npix);
 	cout << "Wiener map computed" << endl;
-	// for (int ind = 0; ind < impix ; ind++) {
-	// 	imgw[ind] = s[ind].real();
-	// }
 
 	// write wiener estimate to a fits file
 	long naxes[2] = { npix, npix };
 	fits_create_file(&fptr, "./wiener.fits", &status);
-	// cout<<"create file status is: "<< s1 << endl;
 	fits_create_img(fptr,  DOUBLE_IMG, 2, &naxes[0], &status);
-	// cout<<"create img is: "<< s1 << endl;
 	fits_write_img(fptr, TDOUBLE, 1, impix, imgw, &status);
-	// cout<<"write img is: "<< s1 << endl;
   fits_close_file(fptr, &status);
-	// cout<<"close img is: "<< s1 << endl;
 
-
-    return 0;
+  return 0;
 }
